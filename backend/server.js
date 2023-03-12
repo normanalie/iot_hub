@@ -1,38 +1,20 @@
 require('dotenv').config({ path: '../.env' });
 const express = require('express');
-const mqtt = require('mqtt');
+const bodyparser = require('body-parser');
+const cors = require('cors');
+const mqttclient = require('./mqtt');
 const app = express();
-const mqtt_client = mqtt.connect(`mqtts://${process.env.MQTT_URL}`, {
-    clientId: 'clientId-Q1djB2lxpm',
-    clean: false,
-    port: 8883,
-    username: process.env.MQTT_USER,
-    password: process.env.MQTT_PASSWORD,
-});
 
-mqtt_client.on('connect', (payload) => {
-    console.log(payload);
-    mqtt_client.subscribe('pcboflight/test', (err) => {
-        if (err) {
-            console.log(`[MQTT] Error, can't subscribe: ${err}`);
-        } else {
-            console.log(`[MQTT] Subscribed successfully`);
-            mqtt_client.publish('pcboflight/test/set', 'Hello from server');
-        }
-    });
-});
+// MIDDLEWARES
+app.use(cors());
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: false }));
 
-mqtt_client.on('message', (topic, buffer) => {
-    const message = buffer.toString();
-    console.log(`[MQTT] New message on <${topic}>: ${message}`);
-});
+// ROUTES
+const mqttRouter = require('./routes/mqtt');
+app.use('/api/mqtt', mqttRouter);
 
-mqtt_client.on('error', (error) => {
-    console.log("Can't connect" + error);
-});
-
-console.log(`Connected ${mqtt_client.connected}`);
-
+// START
 app.listen(3000, () => {
     console.log('[BACKEND] Listenning on http://localhost:3000/');
 });
