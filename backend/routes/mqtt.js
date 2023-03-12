@@ -39,16 +39,17 @@ router.post('/devices/:id', (req, res) => {
                     .status(401)
                     .json({ message: "You don't have access to this device." });
             }
-            let r = req.body.r;
-            let g = req.body.g;
-            let b = req.body.b;
-            let br = req.body.brightness;
+            const r = req.body.r || null;
+            const g = req.body.g || null;
+            const b = req.body.b || null;
+            const br = req.body.brightness || null;
+            const is_on = req.body.is_on || null;
             mqtt_client.publish(
                 `pcboflight/${device.sn}/set`,
-                `{"r": ${r}, "g": ${g}, "b": ${b}, "brightness": ${br}}`
+                `{"r": ${r}, "g": ${g}, "b": ${b}, "brightness": ${br}, "is_on": ${is_on}}`
             );
             console.log(
-                `Set to {"r": ${r}, "g": ${g}, "b": ${b}, "brightness": ${br}}`
+                `Set to {"r": ${r}, "g": ${g}, "b": ${b}, "brightness": ${br}, "is_on": ${is_on}}`
             );
             return res.status(200).json('ok');
         })
