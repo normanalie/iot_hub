@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const user = encodeURIComponent(process.env.DB_USER);
 const pass = encodeURIComponent(process.env.DB_PASS);
-const url = `mongodb+srv://${user}:${pass}@cluster0.apwyjet.mongodb.net/image-gallery?retryWrites=true&w=majority`;
+const url = `mongodb+srv://${user}:${pass}@cluster0.apwyjet.mongodb.net/iothub?retryWrites=true&w=majority`;
 
 async function connect() {
     try {
