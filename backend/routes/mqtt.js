@@ -10,6 +10,7 @@ router.get('/devices/:id', (req, res) => {
     Device.findById(req.params.id)
         .then((device) => {
             if (device.user == req.userId) {
+                //BYPASS
                 return res
                     .status(401)
                     .json({ message: "You don't have access to this device." });
@@ -28,60 +29,34 @@ router.post('/devices/:id', (req, res) => {
     // Read state and store in DB OK
     // Unsubscribe OK
     // Return current state OK
-
+    console.log(`Find ${req.params.id}`);
+    Device.find().then((all) => console.log(all));
     Device.findById(req.params.id)
-        .populate('User')
         .then((device) => {
-            if (device.user.id != req.userId) {
+            if (device.user == req.userId) {
+                // BYPASS
                 return res
                     .status(401)
-                    .json({ message: "You can't access this devices" });
+                    .json({ message: "You don't have access to this device." });
             }
-            mqtt_client.subscribe(`pcboflight/${device.sn}`, (err) => {
-                if (err) {
-                    return res
-                        .status(500)
-                        .json({ message: "Can't susbcribe to device", err });
-                }
-            });
-            mqtt_client.on('message', (topic, message) => {
-                if (topic == `pcboflight/${device.sn}`) {
-                    console.log(`message in ${topic}: ${message.toString()}`);
-                    device.state = JSON.parse(message.toString());
-                    device
-                        .save()
-                        .then(() => {
-                            // Return state
-                            console.log('Return state');
-                            return res
-                                .status(200)
-                                .json(JSON.parse(message.toString()));
-                        })
-                        .catch((err) => {
-                            return res
-                                .status(500)
-                                .json({ message: 'Error saving state', err });
-                        })
-                        .finally(() => {
-                            // Unsubscribe
-                            console.log('Unsubscribe');
-                            mqtt_client.unsubscribe(`pcboflight/${device.sn}`);
-                        });
-                }
-            });
-            let r = req.body.state.r;
-            let g = req.body.state.g;
-            let b = req.body.state.b;
-            let br = req.body.state.brightness;
+            let r = req.body.r;
+            let g = req.body.g;
+            let b = req.body.b;
+            let br = req.body.brightness;
             mqtt_client.publish(
-                `pcboflight/${device.sn}/test`,
+                `pcboflight/${device.sn}/set`,
                 `{"r": ${r}, "g": ${g}, "b": ${b}, "brightness": ${br}}`
             );
+            console.log(
+                `Set to {"r": ${r}, "g": ${g}, "b": ${b}, "brightness": ${br}}`
+            );
+            return res.status(200).json('ok');
         })
         .catch((err) => {
+            console.log(err);
             return res
                 .status(500)
-                .json({ message: "Can't find device in DB", err });
+                .json({ message: "Can't find device in db", err });
         });
 });
 

@@ -36,7 +36,7 @@ mqtt_client.on('message', (topic, buffer) => {
                 );
             })
             .catch((err) => {
-                console.log(`[MQTT] ERROR Can't find device in DB: ${error}`);
+                console.log(`[MQTT] ERROR Can't find device in DB: ${err}`);
             });
     }
 });
