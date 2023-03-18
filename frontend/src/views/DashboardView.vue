@@ -17,6 +17,6 @@ export default {
 </script>
 
 <template>
-    <TheTitle class="pt-2 pl-2">Bonjour {{ user.username }}</TheTitle>
+    <TheTitle class="mt-3 mb-8 pt-2 pl-2">Bonjour {{ user.username }}</TheTitle>
     <MagnetLampCard />
 </template>
