@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.get('/devices/:id', (req, res) => {
     // Check if the device is registered for the user
-    console.log(`Find ${req.params.id}`);
     Device.findById(req.params.id)
         .then((device) => {
             if (device.user == req.userId) {
@@ -29,8 +28,6 @@ router.post('/devices/:id', (req, res) => {
     // Read state and store in DB OK
     // Unsubscribe OK
     // Return current state OK
-    console.log(`Find ${req.params.id}`);
-    Device.find().then((all) => console.log(all));
     Device.findById(req.params.id)
         .then((device) => {
             if (device.user == req.userId) {
