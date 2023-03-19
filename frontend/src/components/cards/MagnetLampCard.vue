@@ -18,6 +18,11 @@ export default {
             return this.is_on ? 'white' : 'none';
         },
     },
+    methods: {
+        click() {
+            console.log('click');
+        },
+    },
 };
 </script>
 
@@ -31,7 +36,7 @@ export default {
 
             <p class="pt-2 pb-4 pl-0 text-stone-200 text-ms">Chambre</p>
 
-            <TheToggle v-model="is_on" />
+            <TheToggle v-model="is_on" @click="click()" />
         </div>
         <ArrowRight class="my-auto h-full" />
     </div>
