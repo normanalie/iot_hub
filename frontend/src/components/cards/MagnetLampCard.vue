@@ -1,4 +1,5 @@
 <script>
+import axios from 'axios';
 import TheToggle from '../TheToggle.vue';
 import ArrowRight from '../icons/ArrowRight.vue';
 import LightBulb from '../icons/LightBulb.vue';
@@ -7,6 +8,9 @@ export default {
         return {
             is_on: false,
         };
+    },
+    props: {
+        device_id: String,
     },
     components: {
         TheToggle,
@@ -20,7 +24,20 @@ export default {
     },
     methods: {
         click() {
-            console.log('click');
+            axios
+                .post(`/api/mqtt/devices/${this.device_id}`, {
+                    is_on: this.is_on ? 0 : 1,
+                })
+                .then((res) => {
+                    axios
+                        .get(`/api/mqtt/devices/${this.device_id}`)
+                        .then((res) => {
+                            console.log(res.data);
+                        });
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         },
     },
 };
