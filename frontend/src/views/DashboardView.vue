@@ -18,5 +18,5 @@ export default {
 
 <template>
     <TheTitle class="mt-3 mb-8 pt-2 pl-2">Bonjour {{ user.username }}</TheTitle>
-    <MagnetLampCard device_id="" />
+    <MagnetLampCard device_id="640dbe495fa4428971cf3bfa" />
 </template>

@@ -10,6 +10,7 @@ const deviceSchema = new mongoose.Schema(
             g: { type: Number },
             b: { type: Number },
             brightness: { type: Number },
+            is_on: { type: Number },
         },
     },
     { timestamps: true }

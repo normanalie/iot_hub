@@ -32,11 +32,16 @@ export default {
                     axios
                         .get(`/api/mqtt/devices/${this.device_id}`)
                         .then((res) => {
-                            console.log(res.data);
+                            this.is_on = res.data.is_on ? true : false;
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            this.is_on = false;
                         });
                 })
                 .catch((err) => {
                     console.log(err);
+                    this.is_on = false;
                 });
         },
     },
