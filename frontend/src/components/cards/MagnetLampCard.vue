@@ -28,9 +28,6 @@ export default {
                 .post(`/api/mqtt/devices/${this.device_id}`, {
                     is_on: this.is_on ? 0 : 1,
                 })
-                .then((res) => {
-                    setTimeout(this.get, 1200);
-                })
                 .catch((err) => {
                     console.log(err);
                     this.is_on = false;
@@ -40,13 +37,13 @@ export default {
             axios
                 .get(`/api/mqtt/devices/${this.device_id}`)
                 .then((res) => {
-                    console.log(`Res data is_on: ${res.data.is_on}`);
                     this.is_on = res.data.is_on ? true : false;
                 })
                 .catch((err) => {
                     console.log(err);
                     this.is_on = false;
                 });
+            setTimeout(this.update, 1500);
         },
     },
     mounted() {
