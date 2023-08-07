@@ -29,15 +29,19 @@ export default {
                     is_on: this.is_on ? 0 : 1,
                 })
                 .then((res) => {
-                    axios
-                        .get(`/api/mqtt/devices/${this.device_id}`)
-                        .then((res) => {
-                            this.is_on = res.data.is_on ? true : false;
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                            this.is_on = false;
-                        });
+                    setTimeout(this.get, 1200);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    this.is_on = false;
+                });
+        },
+        update() {
+            axios
+                .get(`/api/mqtt/devices/${this.device_id}`)
+                .then((res) => {
+                    console.log(`Res data is_on: ${res.data.is_on}`);
+                    this.is_on = res.data.is_on ? true : false;
                 })
                 .catch((err) => {
                     console.log(err);
