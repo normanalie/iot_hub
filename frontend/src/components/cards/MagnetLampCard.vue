@@ -3,10 +3,44 @@ import axios from 'axios';
 import TheToggle from '../TheToggle.vue';
 import ArrowRight from '../icons/ArrowRight.vue';
 import LightBulb from '../icons/LightBulb.vue';
+import ColorPicker from '@radial-color-picker/vue-color-picker';
+import { reactive } from 'vue';
+
+const HSLToRGB = (h, s, l) => {
+    s /= 100;
+    l /= 100;
+    const k = (n) => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = (n) =>
+        l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    return [255 * f(0), 255 * f(8), 255 * f(4)];
+};
+
 export default {
     data() {
+        const HSLcolor = reactive({
+            hue: 50,
+            saturation: 100,
+            luminosity: 50,
+            alpha: 1,
+        });
+        const RGBcolor = reactive({
+            r: 255,
+            g: 255,
+            b: 255,
+        });
         return {
+            HSLcolor,
+            RGBcolor,
             is_on: false,
+            updateColor(hue) {
+                HSLcolor.hue = hue;
+                [RGBcolor.r, RGBcolor.g, RGBcolor.b] = HSLToRGB(
+                    HSLcolor.hue,
+                    HSLcolor.saturation,
+                    HSLcolor.luminosity
+                );
+            },
         };
     },
     props: {
@@ -16,6 +50,7 @@ export default {
         TheToggle,
         ArrowRight,
         LightBulb,
+        ColorPicker,
     },
     computed: {
         fill() {
@@ -23,10 +58,15 @@ export default {
         },
     },
     methods: {
-        click() {
+        change(hue = this.HSLcolor.hue) {
+            this.updateColor(hue);
+            console.log(this.is_on);
             axios
                 .post(`/api/mqtt/devices/${this.device_id}`, {
-                    is_on: this.is_on ? 0 : 1,
+                    r: this.RGBcolor.r,
+                    g: this.RGBcolor.g,
+                    b: this.RGBcolor.b,
+                    is_on: this.is_on ? 1 : 0,
                 })
                 .catch((err) => {
                     console.log(err);
@@ -43,7 +83,7 @@ export default {
                     console.log(err);
                     this.is_on = false;
                 });
-            setTimeout(this.update, 1500);
+            setTimeout(this.update, 3100);
         },
     },
     mounted() {
@@ -62,8 +102,12 @@ export default {
 
             <p class="pt-2 pb-4 pl-0 text-stone-200 text-ms">Chambre</p>
 
-            <TheToggle v-model="is_on" @click="click()" />
+            <TheToggle v-model="is_on" @click="change()" />
+            <color-picker v-bind="HSLcolor" @input="change"></color-picker>
         </div>
-        <ArrowRight class="my-auto h-full" />
     </div>
 </template>
+
+<style>
+@import '@radial-color-picker/vue-color-picker/dist/vue-color-picker.min.css';
+</style>
